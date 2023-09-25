@@ -4,16 +4,27 @@ const bodyParser = require(`body-parser`);
 const app = express();
 const port = 3000;
 const http = require("http");
-const question = require("./questions");
+const questions = require("./questions");
 
 app.use(bodyParser.json());
 
-app.get("/", (req, res) => {
-  res.json({ message: `All Questions` });
+const server = http.createServer((req, res) => {
+  const { method, url } = req;
 });
 
-app.get("/questionabc", (req, res) => {
-  res.json({ message: `one question!` });
+app.get(`/questions`, (req, res) => {
+  res.json(questions);
+});
+
+app.get(`/questions/:questionId`, (req, res) => {
+  const question = questions.find((q) => {
+    return q.id === req.params.questionId;
+  });
+  if (question) {
+    res.json(question);
+  } else {
+    res.status(404).json({ message: `Question not found` });
+  }
 });
 
 app.listen(port, () => {
